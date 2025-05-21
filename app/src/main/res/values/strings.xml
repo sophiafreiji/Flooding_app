@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flood Alert</string>
+    <string name="temperature_hint">Température (°C)</string>
+    <string name="humidity_hint">Humidité (%)</string>
+    <string name="wind_speed_hint">Vitesse du vent (m/s)</string>
+    <string name="water_level_hint">Niveau d\'eau (m)</string>
+    <string name="rain_hint">Pluie (0 ou 1)</string>
+    <string name="predict_button">Prédire</string>
+    <string name="refresh_button">Actualiser</string>
+    <string name="result_label">Résultat : </string>
+    <string name="historical_data">Données historiques</string>
+</resources>
