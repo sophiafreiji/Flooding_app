@@ -20,50 +20,148 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <EditText
-            android:id="@+id/temperatureInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:minHeight="48dp"
-            android:hint="@string/temperature_hint"
-            android:inputType="numberDecimal"
-            android:autofillHints="temperature" />
+            android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/humidityInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="@string/humidity_hint"
-            android:inputType="numberDecimal"
-            android:autofillHints="humidity" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Temperature (%)"
+                android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/windSpeedInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:hint="@string/wind_speed_hint"
-            android:inputType="numberDecimal"
-            android:autofillHints="windSpeed" />
+            <TextView
+                android:id="@+id/temperatureValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="16sp" />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/waterLevelInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:minHeight="48dp"
-            android:hint="@string/water_level_hint"
-            android:inputType="numberDecimal"
-            android:autofillHints="waterLevel" />
+            android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/rainInput"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Humidity (%)"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/humidityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:minHeight="48dp"
-            android:hint="@string/rain_hint"
-            android:inputType="number"
-            android:autofillHints="rain" />
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Water Level (%)"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/waterLevelValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="48dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Rainfall (%)"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/rainfallValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="48dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Soil Moisture (%)"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/soilMoistureValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- HIDDEN FIELDS TO STORE VALUES FOR PREDICTION -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <EditText
+                android:id="@+id/temperatureInput"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/humidityInput"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/waterLevelInput"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/rainfallInput"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/soilMoistureInput"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,14 +175,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="@string/predict_button" />
+                android:text="Predict" />
 
             <Button
                 android:id="@+id/btnRefresh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="@string/refresh_button"
+                android:text="Refresh"
                 android:layout_marginStart="16dp" />
         </LinearLayout>
 
@@ -99,7 +197,7 @@
             android:id="@+id/resultText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/result_label"
+            android:text="Result:"
             android:textSize="18sp"
             android:textColor="#000000"
             android:textStyle="bold"
@@ -108,7 +206,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/historical_data"
+            android:text="Historical Data"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="32dp"

@@ -8,9 +8,9 @@ import retrofit2.http.POST
 data class PredictionRequest(
     val temperature: Float,
     val humidity: Float,
-    val wind_speed: Float,
+    val soil_moisture: Float,
     val water_level: Float,
-    val rain:Int
+    val rainfall: Float
 )
 
 data class PredictionResponse(
@@ -22,11 +22,12 @@ data class SensorDataResponse(
 )
 
 data class SensorData(
+    val device_id: String,
     val temperature: Double,
     val humidity: Double,
-    val wind_speed: Double,
+    val soil_moisture: Double,
     val water_level: Double,
-    val rain: Int,
+    val rainfall: Double,
     val timestamp: String
 )
 
@@ -37,4 +38,3 @@ interface FloodAPI {
     @GET("api/data")
     fun getSensorData(): Call<SensorDataResponse>
 }
-

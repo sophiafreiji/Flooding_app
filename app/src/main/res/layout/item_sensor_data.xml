@@ -37,7 +37,7 @@
                 android:id="@+id/textTemperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25.0°C"
+                android:text="25.0%"
                 android:layout_marginEnd="8dp"/>
 
             <TextView
@@ -55,13 +55,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vent: " />
+                android:text="Soil: " />
 
             <TextView
-                android:id="@+id/textWindSpeed"
+                android:id="@+id/textSoilMoisture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3.2 m/s" />
+                android:text="45.0%" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,25 +73,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Eau: " />
+                android:text="Water: " />
 
             <TextView
                 android:id="@+id/textWaterLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1.45 m"
+                android:text="44.0%"
                 android:layout_marginEnd="16dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pluie: " />
+                android:text="Rain: " />
 
             <TextView
-                android:id="@+id/textRain"
+                android:id="@+id/textRainfall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Non" />
+                android:text="100.0%" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

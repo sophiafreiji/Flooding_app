@@ -1,7 +1,7 @@
 package com.example.flood
 
 import android.os.Bundle
-import android.util.Log  // Ajout de l'import manquant pour Log
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-// Suppression de l'import qui cause l'erreur
-import com.example.flood.api.PredictionRequest  // Ajout de l'import manquant pour PredictionRequest
+import com.example.flood.adapter.SensorDataAdapter
+import com.example.flood.api.PredictionRequest
 import com.example.flood.api.PredictionResponse
 import com.example.flood.api.RetrofitClient
 import com.example.flood.api.SensorData
@@ -25,52 +25,75 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var progressBar: ProgressBar
 
+    // Value display TextViews
+    private lateinit var temperatureValue: TextView
+    private lateinit var humidityValue: TextView
+    private lateinit var waterLevelValue: TextView
+    private lateinit var rainfallValue: TextView
+    private lateinit var soilMoistureValue: TextView
+
+    // Hidden EditText fields
+    private lateinit var temperatureInput: EditText
+    private lateinit var humidityInput: EditText
+    private lateinit var waterLevelInput: EditText
+    private lateinit var rainfallInput: EditText
+    private lateinit var soilMoistureInput: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialiser les vues
-        val temperatureInput = findViewById<EditText>(R.id.temperatureInput)
-        val humidityInput = findViewById<EditText>(R.id.humidityInput)
-        val windSpeedInput = findViewById<EditText>(R.id.windSpeedInput)
-        val waterLevelInput = findViewById<EditText>(R.id.waterLevelInput)
-        val rainInput = findViewById<EditText>(R.id.rainInput)
+        // Initialize hidden views
+        temperatureInput = findViewById(R.id.temperatureInput)
+        humidityInput = findViewById(R.id.humidityInput)
+        waterLevelInput = findViewById(R.id.waterLevelInput)
+        rainfallInput = findViewById(R.id.rainfallInput)
+        soilMoistureInput = findViewById(R.id.soilMoistureInput)
+
+        // Initialize display views
+        temperatureValue = findViewById(R.id.temperatureValue)
+        humidityValue = findViewById(R.id.humidityValue)
+        waterLevelValue = findViewById(R.id.waterLevelValue)
+        rainfallValue = findViewById(R.id.rainfallValue)
+        soilMoistureValue = findViewById(R.id.soilMoistureValue)
+
         val resultText = findViewById<TextView>(R.id.resultText)
         val predictButton = findViewById<Button>(R.id.btnPredict)
         val refreshButton = findViewById<Button>(R.id.btnRefresh)
         progressBar = findViewById(R.id.progressBar)
 
-        // Configurer RecyclerView
+        // Configure RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.dataRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Charger les données au démarrage
+        // Load data on startup
         loadSensorData()
 
-        // Bouton de prédiction
+        // Prediction button
+
         predictButton.setOnClickListener {
-            // Vérifier les entrées
-            if (validateInputs(temperatureInput, humidityInput, windSpeedInput, waterLevelInput, rainInput)) {
+            // Validate inputs (we still use the hidden EditText for logic)
+            if (validateInputs(temperatureInput, humidityInput, waterLevelInput, rainfallInput, soilMoistureInput)) {
                 showProgress(true)
 
-                // Convertir les entrées
+                // Convert inputs
                 val temperature = temperatureInput.text.toString().toFloatOrNull() ?: 0.0f
                 val humidity = humidityInput.text.toString().toFloatOrNull() ?: 0.0f
-                val windSpeed = windSpeedInput.text.toString().toFloatOrNull() ?: 0.0f
+                val soilMoisture = soilMoistureInput.text.toString().toFloatOrNull() ?: 0.0f
                 val waterLevel = waterLevelInput.text.toString().toFloatOrNull() ?: 0.0f
-                val rain = rainInput.text.toString().toIntOrNull() ?: 0
+                val rainfall = rainfallInput.text.toString().toFloatOrNull() ?: 0.0f
 
-                // Log les valeurs pour débogage
+                // Log values for debugging
                 Log.d("MainActivity", "Sending prediction request with: " +
-                        "temperature=$temperature, humidity=$humidity, wind_speed=$windSpeed, " +
-                        "water_level=$waterLevel, rain=$rain")
+                        "temperature=$temperature, humidity=$humidity, soil_moisture=$soilMoisture, " +
+                        "water_level=$waterLevel, rainfall=$rainfall")
 
                 val request = PredictionRequest(
                     temperature = temperature,
                     humidity = humidity,
-                    wind_speed = windSpeed,
+                    soil_moisture = soilMoisture,
                     water_level = waterLevel,
-                    rain = rain
+                    rainfall = rainfall
                 )
 
                 RetrofitClient.api.predictFlood(request).enqueue(object : Callback<PredictionResponse> {
@@ -82,17 +105,17 @@ class MainActivity : AppCompatActivity() {
                         if (response.isSuccessful && response.body() != null) {
                             val prediction = response.body()?.prediction
                             val message = if (prediction == 1) {
-                                "Risque d'inondation détecté!"
+                                "Flood risk detected!"
                             } else {
-                                "Aucun risque d'inondation détecté"
+                                "No flood risk detected"
                             }
-                            resultText.text = "Résultat : $message"
+                            resultText.text = "Result: $message"
                         } else {
-                            val errorBody = response.errorBody()?.string() ?: "Erreur inconnue"
+                            val errorBody = response.errorBody()?.string() ?: "Unknown error"
                             Log.e("MainActivity", "Error response: $errorBody")
-                            resultText.text = "Erreur : ${response.code()} - ${response.message()}"
+                            resultText.text = "Error: ${response.code()} - ${response.message()}"
                             Toast.makeText(this@MainActivity,
-                                "Erreur serveur: $errorBody",
+                                "Server error: $errorBody",
                                 Toast.LENGTH_LONG).show()
                         }
                     }
@@ -100,9 +123,9 @@ class MainActivity : AppCompatActivity() {
                     override fun onFailure(call: Call<PredictionResponse>, t: Throwable) {
                         showProgress(false)
                         Log.e("MainActivity", "Network failure", t)
-                        resultText.text = "Erreur de connexion: ${t.javaClass.simpleName}"
+                        resultText.text = "Connection error: ${t.javaClass.simpleName}"
                         Toast.makeText(this@MainActivity,
-                            "Erreur de connexion: ${t.message}",
+                            "Connection error: ${t.message}",
                             Toast.LENGTH_LONG).show()
                         t.printStackTrace()
                     }
@@ -110,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Bouton de rafraîchissement des données
+        // Refresh data button
         refreshButton.setOnClickListener {
             loadSensorData()
         }
@@ -127,16 +150,16 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     val sensorData = response.body()?.data
                     if (sensorData != null && sensorData.isNotEmpty()) {
-                        // Mettre à jour le RecyclerView avec les données
+                        // Update RecyclerView with data
                         updateSensorDataUI(sensorData)
                     } else {
                         Toast.makeText(this@MainActivity,
-                            "Aucune donnée de capteur disponible",
+                            "No sensor data available",
                             Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this@MainActivity,
-                        "Erreur de chargement des données: ${response.code()}",
+                        "Data loading error: ${response.code()}",
                         Toast.LENGTH_SHORT).show()
                 }
             }
@@ -144,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<SensorDataResponse>, t: Throwable) {
                 showProgress(false)
                 Toast.makeText(this@MainActivity,
-                    "Erreur de connexion: ${t.message}",
+                    "Connection error: ${t.message}",
                     Toast.LENGTH_SHORT).show()
                 t.printStackTrace()
             }
@@ -152,26 +175,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSensorDataUI(sensorData: List<SensorData>) {
-        // Mettre à jour le RecyclerView avec les données
+        // Update RecyclerView with data
         val recyclerView = findViewById<RecyclerView>(R.id.dataRecyclerView)
-        val adapter = com.example.flood.adapter.SensorDataAdapter(sensorData)
+        val adapter = SensorDataAdapter(sensorData)
         recyclerView.adapter = adapter
 
-        // Vous pouvez aussi pré-remplir les champs avec la dernière donnée
+        // Pre-fill fields with the latest data
         if (sensorData.isNotEmpty()) {
-            val latestData = sensorData[0] // La première est la plus récente car triée côté serveur
-            findViewById<EditText>(R.id.temperatureInput).setText(latestData.temperature.toString())
-            findViewById<EditText>(R.id.humidityInput).setText(latestData.humidity.toString())
-            findViewById<EditText>(R.id.windSpeedInput).setText(latestData.wind_speed.toString())
-            findViewById<EditText>(R.id.waterLevelInput).setText(latestData.water_level.toString())
-            findViewById<EditText>(R.id.rainInput).setText(latestData.rain.toString())
+            val latestData = sensorData[0] // First is the most recent as sorted on server
+
+            // Update hidden EditText to maintain existing logic
+            temperatureInput.setText(latestData.temperature.toString())
+            humidityInput.setText(latestData.humidity.toString())
+            waterLevelInput.setText(latestData.water_level.toString())
+            rainfallInput.setText(latestData.rainfall.toString())
+            soilMoistureInput.setText(latestData.soil_moisture.toString())
+
+            // Update visible TextViews for display with proper units - all using % now
+            temperatureValue.text = "${latestData.temperature} %"
+            humidityValue.text = "${latestData.humidity} %"
+            waterLevelValue.text = "${latestData.water_level} %"
+            rainfallValue.text = "${latestData.rainfall} %"
+            soilMoistureValue.text = "${latestData.soil_moisture} %"
         }
     }
 
     private fun validateInputs(vararg editTexts: EditText): Boolean {
         for (editText in editTexts) {
             if (editText.text.toString().trim().isEmpty()) {
-                editText.error = "Ce champ est requis"
+                // Show Toast instead of error since EditText are hidden
+                Toast.makeText(this, "Incomplete sensor data", Toast.LENGTH_SHORT).show()
                 return false
             }
         }
